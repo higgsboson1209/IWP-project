@@ -8,4 +8,4 @@ Import the postman collection through: https://www.getpostman.com/collections/cc
 
 The backend is deployed and simultaneously the frontend can be accessed using the Github pages url: https://sid370.github.io/Text-Extraction/frontend/home.html
 
-Frontend contributed by Ekansh Gupta
+Project by: Ekansh Gupta 18BCI0175 and Saksham Gupta 18BCI0273
