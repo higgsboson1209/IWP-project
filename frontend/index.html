@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <title>Text Scanner</title>
+ <script>
+     if (localStorage.getItem('token')==""){
+         console.log(100,localStorage.getItem("token"))
+         alert("Unauthorized user, Please login to continue")
+         window.location.href="home.html"
+         //document.getElementById('my_modal').style.visibility="visible"
+    }
+</script> 
+ <link href="https://fonts.googleapis.com/css?family=Nunito&display=swap" rel="stylesheet">
+ <link href="https://fonts.googleapis.com/css?family=Fjalla+One&display=swap" rel="stylesheet">
+ <meta charset="utf-8">
+ <meta content="width=device-width, initial-scale=1" name="viewport">
+ <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css" rel="stylesheet">
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+ <link rel="stylesheet" href="assets/css/Bootstrap-Image-Uploader.css">
+ <script src="assets/js/Bootstrap-Image-Uploader.js"></script>
+ <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+ <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+ <link rel="stylesheet" href="assets/fonts/font-awesome.min.css">
+</head>
+<body style="background-image: linear-gradient(-100deg,white,dodgerblue);">
+
+<nav class="navbar navbar-inverse">
+ <div class="container-fluid">
+  <div class="navbar-header">
+   <a class="navbar-brand" href="index.html" style="font-family: fantasy">Text Scanner</a>
+  </div>
+  <ul class="nav navbar-nav" style="float: right;">
+   <li ><a href=index.html><img src="log2.png" style="
+        height: 30px;
+        border-radius: 0;
+        overflow:auto;
+        margin-top: -6px;" alt=""></a></li>
+   <li onclick="logout()"><a href="home.html">Sign out</a></li>
+  </ul>
+ </div>
+</nav>
+<div class="bootstrap_img_upload">
+ <div class="container py-5">
+
+  <header class="text-white text-center">
+   <h1 class="display-4">Image Uploader</h1>
+   <img src="https://res.cloudinary.com/mhmd/image/upload/v1564991372/image_pxlho1.svg" alt="" width="150" class="mb-4">
+  </header>
+
+
+  <div class="row py-4">
+   <div class="col-lg-6 mx-auto">
+     <div id="my_modal" style="visibility: hidden;">
+          <div class="modal" tabindex="-1" role="dialog">
+               <div class="modal-dialog" role="document">
+                 <div class="modal-content">
+                   <div class="modal-header">
+                     <h5 class="modal-title">Unauthorized User</h5>
+                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                       <span aria-hidden="true">&times;</span>
+                     </button>
+                   </div>
+                   <div class="modal-body">
+                     <p>You are not authorised. Please Login to continue</p>
+                   </div>
+                   <div class="modal-footer">
+                     <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="window.location.href='login.html'">Login</button>
+                   </div>
+                 </div>
+               </div>
+             </div>
+     </div>
+
+    <div id="file-selector" class="input-group mb-3 px-2 py-2 rounded-pill bg-white shadow-sm">
+     <input id="upload" type="file"   onchange="readURL(this);" class="form-control border-0">
+     <label id="upload-label" for="upload" class="font-weight-light text-muted">Choose file</label>
+     <div class="input-group-append">
+      <label for="upload" class="btn btn-light m-0 rounded-pill px-4"> <i class="fa fa-cloud-upload mr-2 text-muted"></i><small class="text-uppercase font-weight-bold text-muted">Choose file</small></label>
+     </div>
+    </div>
+    <p class="font-italic text-white text-center">The image uploaded will be rendered inside the box below.</p>
+    <div class="image-area mt-4"><img id="imageResult" src="#" alt="" class="img-fluid rounded shadow-sm mx-auto d-block"></div>
+   </div>
+  </div>
+ </div>
+</div>
+
+<script>
+     //const axios = require('axios').default;
+     
+     const file=document.getElementById('file-selector')
+     file.addEventListener('change',(e)=>{
+          console.log(e.target.files)
+          const file = event.target.files[0]
+          if (file.type!="image/jpeg" && file.type!="image/png"){
+               alert("Not an image file")
+               window.location.href="index.html"
+          }
+          let formdata = new FormData();
+          formdata.append('image',file,file.name)
+          axios({
+               method: 'post',
+               url:'https://text-extractor-backend.herokuapp.com/text/upload',
+               data: formdata,
+               credentials: 'same-origin',
+               headers:{
+                    'Authorization':localStorage.getItem('token')
+               }
+          })
+          .then(res=>{
+               console.log(res)
+               if (res.data.status===200){
+                   window.open(
+                        res.data.link,
+                        '_blank'
+                   )
+               }else{
+                    alert(res.data.message)
+               }
+          })
+          .catch(err=>console.warn(err))
+          /*let data={
+               image: e.target.files[0]
+          }
+          console.log(100,data.image)
+          fetch('http://localhost:3000/text/upload',{
+               method:'POST',
+               headers:{
+                    'Authorization':localStorage.getItem('token')
+               },
+               body: data
+          })
+          .then(res=>res.json())
+          .then((resp)=>{
+               console.log(resp)
+               if (resp.status!==200) alert(resp.message)
+          })
+          .catch(err=>console.warn(err))*/
+     })
+     function logout(){
+          localStorage.setItem("token","")
+     }
+     
+</script>
+</body>
+</html>
+
